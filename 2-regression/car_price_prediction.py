@@ -235,3 +235,67 @@ plt.legend()
 plt.show()
 
 """categorial variables"""
+categorical_columns = [
+    'make', 'model', 'engine_fuel_type', 'driven_wheels', 'market_category',
+    'vehicle_size', 'vehicle_style']
+
+categorical = {}
+
+for c in categorical_columns:
+    categorical[c] = list(df_train[c].value_counts().head().index)
+
+def prepare_X(df):
+    df = df.copy()
+
+    df['age'] = 2017 - df['year']
+    features = base + df['age'] 
+
+    for v in [2, 3, 4]:
+        df['num_doors_%d' ]
+
+X_train = prepare_X(df_train)
+w0, w = train_linear_regression(X_train, y_train)
+
+X_val = prepare_X(df_val)
+y_pred = w0 + X_val.dot(w)
+rmse(y_val, y_pred)
+
+"""regularisation"""
+X = [
+    [4, 4, 4],
+    [3, 5, 5],
+    [5, 1, 1],
+    [5, 4, 4],
+    [7, 5, 5],
+    [4, 5, 5.00000001],
+]
+
+X = np.array(X)
+
+XTX = X.T.dot(X)
+XTX_inv = np.linalg.inv(XTX)
+XTX_inv.dot(X.T).dot(y)
+
+
+array([[ -0.33668908,   0.33501399,   0.33501399],
+       [  0.33501399,  49.91590897, -50.08509104],
+       [  0.33501399, -50.08509104,  49.91590897]])
+
+def train_linear_regression_reg(X, y, r=0.001):
+    ones = np.ones(X.shape[0])
+    X = np.column_stack([ones, X])
+
+    XTX = X.T.dot(X)
+    XTX = XTX + r * np.eye(XTX.shape[0])
+
+    XTX_inv = np.linalg.inv(XTX)
+    w_full = XTX_inv.dot(X.T).dot(y)
+    
+    return w_full[0], w_full[1:]
+
+X_train = prepare_X(df_train)
+w0, w = train_linear_regression_reg(X_train, y_train, r=0.01)
+
+X_val = prepare_X(df_val)
+y_pred = w0 + X_val.dot(w)
+rmse(y_val, y_pred)
